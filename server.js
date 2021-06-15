@@ -1,10 +1,11 @@
 const express = require('express'); // require the express package
 const app = express(); // initialize your express app instance
+const data = require('./data/weather.json');
 const cors = require('cors');
 require('dotenv').config();
+const PORT = process.env.PORT;
 
 app.use(cors()); // after you initialize your express app instance
-const PORT = process.env.PORT;
 // a server endpoint
 app.get(
   '/', // our endpoint name
@@ -14,4 +15,8 @@ app.get(
   }
 );
 
-app.listen(PORT); // kick start the express server to work
+app.get('/weather', (req, res) => {
+  res.json(data);
+});
+
+app.listen(PORT); // kick start the express server to work.
