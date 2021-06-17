@@ -1,76 +1,19 @@
-const express = require('express');
-const app = express();
+const express = require('express'); // require the express package
+const app = express(); // initialize your express app instance
 const cors = require('cors');
-require('dotenv').config();
+app.use(cors()); // after you initialize your express app instance
+const weatherController = require('./controller/weather.controller');
+const indexController = require('./controller/index.controller');
+const moviesController = require('./controller/movies.controller');
 const PORT = process.env.PORT;
-// const weatherData = require('./data/weather.json');
-const WEATHER_BIT_KEY = process.env.WEATHER_BIT_KEY;
-const MOVIE_DB_KEY = process.env.MOVIE_DB_KEY;
-const axios = require('axios');
-const { response } = require('express');
 
-app.use(cors());
-app.get('/', function (req, res) {
-  res.send('Hello World💗');
-});
+// a server endpoint
+app.get('/', indexController); // our endpoint name
 
-class Weather {
-  constructor(weatherData) {
-    this.description = weatherData.weather.description;
-    this.date = weatherData.valid_date;
-  }
-}
+app.get('/weather', weatherController);
 
-app.get('/weather', (req, res) => {
-  const lat = req.query.lat;
-  const lon = req.query.lon;
-  if (lat && lon) {
-    const weatherBitURL = `https://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHER_BIT_KEY}&lat=${lat}&lon=${lon}`;
-    axios
-      .get(weatherBitURL)
-      .then((response) => {
-        //first data for the axios the second data from the weatherBit
-        const responseData = response.data.data.map((obj) => new Weather(obj));
-        res.json(responseData);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        res.send(error.message);
-      });
-  } else {
-    res.send('please provide the proper lat and lon');
-  }
-});
+app.get('/movies', moviesController);
 
-app.get('/movies', (req, res) => {
-  const cityName = req.query.query;
-  if (cityName) {
-    const movieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${MOVIE_DB_KEY}&query=${req.query.query}`;
-    axios
-      .get(movieUrl)
-      .then((response) => {
-        const responseData = response.data.results.map((obj) => new Movie(obj));
-        res.json(responseData);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        res.send(error.message);
-      });
-  } else {
-    res.send('please provide the city query = city name');
-  }
-});
-
-class Movie {
-  constructor(movieData) {
-    this.title = movieData.original_title;
-    this.overview = movieData.overview;
-    this.average_votes = movieData.vote_average;
-    this.total_votes = movieData.vote_count;
-    this.image_url = 'http://image.tmdb.org/t/p/w342' + movieData.poster_path;
-    this.popularity = movieData.popularity;
-    this.released_on = movieData.release_date;
-  }
-}
-
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server started on ${PORT}`);
+}); // kick start the express server to work
