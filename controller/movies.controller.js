@@ -9,7 +9,7 @@ const moviesController = (req, res) => {
   const cityName = req.query.query;
   const requestKey = `movie-${title}`;
   if (cityName) {
-    if (cacheObj[requestKey] && Date.now() - cacheObj[requestKey] < 86400000) {
+    if (cacheObj[requestKey] && Date.now() - cacheObj[requestKey] < 25000) {
       res.json(cacheObj[requestKey]);
     } else {
       const movieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${MOVIE_DB_KEY}&query=${cityName}`;

@@ -11,7 +11,7 @@ const weatherController = (req, res) => {
   const lon = req.query.lon;
   const requestKey = `weather-${lat}-${lon}`;
   if (lat && lon) {
-    if (cacheObj[requestKey] && Date.now() - cacheObj[requestKey] < 86400000) {
+    if (cacheObj[requestKey] && Date.now() - cacheObj[requestKey] < 25000) {
       res.json(cacheObj[requestKey]);
     } else {
       const weatherBitUrl = `http://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHER_BIT_KEY}&lat=${lat}&lon=${lon}`;
